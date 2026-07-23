@@ -22,7 +22,7 @@ file_order <- c(
 )
 
 tps <- tps |> 
-  mutate(fully_redacted = is.na(unique_alien_id),
+  mutate(fully_redacted = if_all(c(unique_alien_id, form_number, form_type), is.na),
       file_original = factor(file_original, file_order),
       rec_year = year(rec_date),
       rec_month = zoo::as.yearmon(rec_date),
@@ -35,9 +35,13 @@ tps_ids <- unique(tps$unique_alien_id)
 
 save(tps_ids, file = "data/tps_ids.RData")
 
+# Count fuly redacted rows per original file
+
 fully_redacted_tbl <- tps |> 
   count(file_original, fully_redacted) |> 
   pivot_wider(names_from = "fully_redacted", values_from = "n")
+
+# Fully redacted rows are not distributed evenly across original files
 
 p1 <- tps |> 
   count(file_original, fully_redacted) |> 
@@ -46,35 +50,71 @@ p1 <- tps |>
 
 p1
 
+# We can't know for sure because `data_source` is among redacted fields,
+# but note fully-redacted records are only present in original files which include
+# records drawn from ELIS system
+
 p2 <- tps |> 
-  count(file_original, rec_year) |> 
-  ggplot(aes(x = file_original, y = n, fill = rec_year)) +
-  geom_col()
-
-p2
-
-p2.1 <- tps |> 
-  count(file_original, dec_year) |> 
-  ggplot(aes(x = file_original, y = n, fill = dec_year)) +
-  geom_col()
-
-p2.1
-
-p3 <- tps |> 
   count(file_original, data_source) |> 
   ggplot(aes(x = file_original, y = n, fill = data_source)) +
   geom_col()
 
+p2
+
+# Count missing unique IDs per original file after dropping fully-redacted rows
+
+missing_ID_tbl <- tps |> 
+  filter(fully_redacted == FALSE) |>
+  mutate(missing_ID = is.na(unique_alien_id)) |> 
+  count(file_original, missing_ID) |> 
+  pivot_wider(names_from = "missing_ID", values_from = "n")
+
+p3 <- tps |> 
+  filter(fully_redacted == FALSE) |>
+  mutate(missing_ID = is.na(unique_alien_id)) |>
+  filter(missing_ID == TRUE) |> 
+  count(file_original, missing_ID) |> 
+  ggplot(aes(x = file_original, y = n, fill = missing_ID)) +
+  geom_col()
+
 p3
 
-# # Do files contain any hidden structure based on row position? This is a bit heavy for processing.
+p3.1 <- tps |> 
+  filter(fully_redacted == FALSE) |>
+  mutate(missing_ID = is.na(unique_alien_id)) |> 
+  filter(missing_ID == TRUE) |> 
+  count(rec_year, missing_ID) |> 
+  ggplot(aes(x = rec_year, y = n, fill = missing_ID)) +
+  geom_col()
 
-# p4 <- tps |> 
+p3.1
+
+# Original files are structured approximately sequentially, with exception of
+# older records drawn from C3 system latter files
+
+p4 <- tps |> 
+  count(file_original, rec_year) |> 
+  ggplot(aes(x = file_original, y = n, fill = rec_year)) +
+  geom_col()
+
+p4
+
+p4.1 <- tps |> 
+  count(file_original, dec_year) |> 
+  ggplot(aes(x = file_original, y = n, fill = dec_year)) +
+  geom_col()
+
+p4.1
+
+# # Do files contain any hidden structure based on row position? This is a bit heavy for processing.
+# # Mostly we just see that files are limited by date range but with some exceptions.
+
+# p5 <- tps |> 
 #   ggplot(aes(x = rec_date, y = row_original, color = file_original)) +
 #   geom_point() +
 #   facet_wrap(~file_original)
 
-# p4
+# p5
 
 ###
 
