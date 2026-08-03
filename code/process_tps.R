@@ -1,6 +1,7 @@
 library(tidyverse)
 
 source("code/country_codes.R")
+source("code/functions/write_xlsx_by_fy.R")
 
 tps_df <-
   arrow::open_dataset("data/staging/i821") |>
@@ -52,3 +53,4 @@ tps_df <-
   )
 
 arrow::write_parquet(tps_df, "data/tps.parquet", compression = "zstd")
+write_xlsx_by_fy(tps_df, "data/tps.xlsx", label = "TPS")

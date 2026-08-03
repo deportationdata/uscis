@@ -1,6 +1,7 @@
 library(tidyverse)
 
 source("code/country_codes.R")
+source("code/functions/write_xlsx_by_fy.R")
 
 daca_df <-
   arrow::open_dataset("data/staging/i821d") |>
@@ -51,3 +52,4 @@ daca_df <-
   )
 
 arrow::write_parquet(daca_df, "data/daca.parquet", compression = "zstd")
+write_xlsx_by_fy(daca_df, "data/daca.xlsx", label = "DACA")
