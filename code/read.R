@@ -1,8 +1,7 @@
-# Read the Mukherjee v. USCIS FOIA release (one .xlsx per batch, two benefit
-# forms) into one parquet per file, staged under data/staging/<form_id>/ so
+# Read benefits applications form data and stage under data/staging/<form_id>/ so
 # arrow can later treat each form's parts as a single dataset.
 #
-# Any .xlsb sources in release_dir must be converted to .xlsx first by running
+# Any .xlsb sources must be converted to .xlsx first by running
 # `Rscript code/convert_xlsb.R`. This script reads only .xlsx.
 
 library(dplyr)
@@ -10,13 +9,13 @@ library(purrr)
 library(tidyr)
 library(readxl)
 library(furrr)
+library(stringr)
 
 source("code/functions/check_dttm_and_convert_to_date.R")
 
 release_dir <- "inputs/mukherjee-v-uscis"
 out_dir <- "data/staging"
 
-# Columns parsed as Date.
 date_cols <- c(
   "status_date",
   "natz_test_date",
@@ -30,8 +29,6 @@ date_cols <- c(
   "latest_noid_date"
 )
 
-# Columns holding a 4-digit year. Read as numeric, then coerced to integer —
-# readxl has no "integer" col_type.
 year_cols <- c(
   "ben_year_of_birth",
   "latest_trvl_depart_yr",
@@ -39,7 +36,6 @@ year_cols <- c(
 )
 
 # "null" is USCIS's NA marker; the rest are FOIA-exemption redaction codes.
-# Treating them as NA at read time keeps them out of readxl's type guessing.
 na_strings <- c("null", "(b)(6)", "(b)(3) (b)(6) (b)(7)(c)")
 
 # form_id -> filename prefix and human-readable label
@@ -53,7 +49,7 @@ benefits_per_file <-
   benefit_forms |>
   mutate(
     file_original = map(pattern, \(prefix) {
-      # Restrict to .xlsx so .xlsb siblings (converted by code/convert_xlsb.R)
+      # Restrict to .xlsx so .xlsb (converted by code/convert_xlsb.R)
       # aren't picked up twice.
       list.files(
         release_dir,
@@ -73,7 +69,7 @@ walk(
   showWarnings = FALSE
 )
 
-# Each worker reads ONE source file and writes its own parquet into
+# Each worker reads a source file and writes its own parquet into
 # data/staging/<form_id>/, so the parts can be read back as one dataset.
 plan(multisession)
 
@@ -88,8 +84,15 @@ future_pwalk(benefits_per_file, \(form_id, label, file_original) {
     TRUE ~ "text"
   )
 
-  stem <- basename(tools::file_path_sans_ext(file_original))
-  out_file <- file.path(out_dir, form_id, paste0(gsub(" ", "_", stem), ".parquet"))
+  out_file <- file.path(
+    out_dir,
+    form_id,
+    file_original |>
+      tools::file_path_sans_ext() |>
+      basename() |>
+      str_replace(" ", "_") |>
+      str_c(".parquet")
+  )
 
   read_excel(file_original, col_types = col_types, na = na_strings) |>
     mutate(across(any_of(year_cols), as.integer)) |>
@@ -97,13 +100,16 @@ future_pwalk(benefits_per_file, \(form_id, label, file_original) {
       where(\(x) inherits(x, "POSIXt")),
       check_dttm_and_convert_to_date
     )) |>
-    # these are from the pwalk arguments, not the source file.
-    mutate(form_id = form_id, label = label, .before = 1) |>
-    mutate(file_original = file_original, row_original = row_number()) |>
+    # NB: these are from the pwalk arguments, not the source file.
+    mutate(
+      form_id = form_id,
+      label = label,
+      file_original = file_original,
+      row_original = row_number()
+    ) |>
     arrow::write_parquet(
       out_file,
-      compression = "zstd",
-      compression_level = 13
+      compression = "zstd"
     )
 })
 

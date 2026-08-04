@@ -1,6 +1,7 @@
 library(tidyverse)
 
 source("code/country_codes.R")
+source("code/functions/repair_double_encoded_utf8.R")
 source("code/functions/write_xlsx_by_fy.R")
 
 tps_df <-
@@ -10,8 +11,12 @@ tps_df <-
   # the full name, so map the codes and keep the names as they are.
   left_join(uscis_country_codes, by = join_by(ben_country_of_birth == code)) |>
   mutate(
-    ben_country_of_birth_original = ben_country_of_birth,
-    ben_country_of_birth = coalesce(country, ben_country_of_birth_original),
+    # a C3 value that the code table cannot resolve is not a country code so blank
+    ben_country_of_birth = case_when(
+      data_source == "ELIS" ~ repair_double_encoded_utf8(ben_country_of_birth),
+      !is.na(country) ~ country,
+      .default = NA_character_
+    ),
     # recode gender and form type given differences across C3 and ELIS
     ben_gender = recode_values(
       ben_gender,
@@ -50,7 +55,8 @@ tps_df <-
   mutate(
     duplicate_drop_row = coalesce(duplicate_likely, FALSE) &
       !duplicate_first
-  )
+  ) |>
+  relocate(form_id, label, file_original, row_original, .after = last_col())
 
 arrow::write_parquet(tps_df, "data/tps.parquet", compression = "zstd")
 write_xlsx_by_fy(tps_df, "data/tps.xlsx", label = "TPS")
