@@ -1,0 +1,417 @@
+"code","name","numeric_class"
+"ADEN","Yemen-Aden",280
+"AFARS","Djibouti",322
+"AFGHA","Afghanistan",236
+"AFRIC","Africa",300
+"ALBAN","Albania",101
+"ALGER","Algeria",316
+"ALHUC","Spain",129
+"ALKUW","Al-Kuwayt",272
+"ALOFI","Wallis and Futuna Islands",469
+"ANDAM","India",247
+"ANDOR","Andorra",102
+"ANGOL","Angola",324
+"ANQUI","Anguilla",529
+"ANTAR","French Southern and Antarctic",394
+"ANTIG","Antigua-Barbuda",518
+"ANTIL","Netherlands Antilles",508
+"ARABI","Arabian Peninsula",239
+"ARABJ","Jordan",253
+"ARGEN","Argentina",687
+"ARMEN","Armenia",151
+"ARUBA","Aruba",532
+"ASAMO","American Samoa",403
+"ASIA","Asia",200
+"AUSTR","French Polynesia",411
+"AZERB","Azerbaijan",152
+"AZORE","Portugal",126
+"BAHAM","Bahamas",512
+"BAHRA","Bahrain",298
+"BALEA","Spain",129
+"BANAB","Kiribati",414
+"BANGL","Bangladesh",274
+"BANKS","Vanuatu",410
+"BARBA","Barbados",513
+"BARBU","Antigua-Barbuda",518
+"BELGI","Belgium",104
+"BELIZ","Belize",581
+"BENIN","Benin",386
+"BERMU","Bermuda",509
+"BGUIA","Guyana",603
+"BHOND","Belize",581
+"BHUTA","Bhutan",242
+"BISSA","Guinea-Bissau",327
+"BOLIV","Bolivia",688
+"BONAI","Netherlands Antilles",508
+"BONIN","Japan",252
+"BORNE","Malaysia",273
+"BOSNI","Bosnia-Herzegovina",164
+"BOTSW","Botswana",336
+"BRAZI","Brazil",689
+"BRHON","Belize",581
+"BRUNE","Brunei",217
+"BSOLO","British Solomon Islands",412
+"BULGA","Bulgaria",105
+"BURKI","Burkina Faso",393
+"BURMA","Burma",243
+"BURUN","Burundi",375
+"BVI","British Virgin Islands",525
+"BVIRG","British Virgin Islands",525
+"BYELA","Byelarus",153
+"CABIN","Angola",324
+"CAFRI","Central African Republic",383
+"CAICO","Turks and Caicos Islands",527
+"CAMBO","Kampuchea",201
+"CAMER","Cameroon",310
+"CAMPB","Campbell Island",464
+"CANAD","Canada",574
+"CANAL","Panama",580
+"CANAR","Canary Islands",129
+"CAPEV","Cape Verde",326
+"CAR","Central African Republic",383
+"CAYMA","Cayman Islands",526
+"CENTR","Central African Republic",383
+"CEUTA","Spain",129
+"CEYLO","Sri Lanka",244
+"CHAD","Chad",384
+"CHAFA","Spain",129
+"CHANN","United Kingdom",180
+"CHILE","Chile",690
+"CHINA","China, People's Republic of",245
+"CHRIS","Christmas Island",270
+"COCOS","Cocos Islands",271
+"COLOM","Colombia",691
+"COMOR","Comoros",317
+"CONGO","Congo",385
+"CONKI","Zaire",301
+"COOK","Cook Islands",467
+"COOKI","Cook Islands",467
+"CORSI","France",111
+"COSTA","Costa Rica",575
+"CRETE","Greece",113
+"CROAT","Croatia",165
+"CSSR","USSR",134
+"CUBA","Cuba",584
+"CURAC","Netherlands Antilles",508
+"CVI","Cape Verde",326
+"CYPRU","Cyprus",218
+"CZ","Panama",580
+"CZECH","Czechoslovakia",106
+"CZREP","Czech Republic",140
+"DAHOM","Benin",386
+"DANZI","Poland",125
+"DECON","Democratic Republic of Congo",0
+"DENMA","Denmark",108
+"DJIBO","Djibouti",322
+"DODEC","Greece",113
+"DOMIN","Dominica",519
+"DR","Dominican Republic",585
+"ECUAD","Ecuador",692
+"EGERM","East Germany",112
+"EGYPT","Egypt",368
+"ELLIC","Tuvalu",420
+"ELSAL","El Salvador",576
+"ENGLA","United Kingdom",180
+"EQUAT","Equatorial Guinea",399
+"ERITR","Eritrea",372
+"ESTON","Estonia",109
+"ETHIO","Ethiopia",369
+"EUROP","Europe",100
+"FALKL","Falkland Islands",604
+"FANNI","Kiribati",414
+"FAROE","Denmark",108
+"FEDMA","Malaysia",273
+"FERNA","Equatorial Guinea",399
+"FGUIA","French Guiana",601
+"FIJI","Fiji",413
+"FINLA","Finland",110
+"FORMO","Taiwan",268
+"FPOLY","French Polynesia",411
+"FRANC","France",111
+"FRG","Germany",112
+"FRIEN","Tonga",417
+"FSAAA","French South Antarctic",394
+"FSM","Federated States of Micronesia",473
+"FSOMA","Djibouti",322
+"FSTMA","Guadeloupe",507
+"FUTUN","Wallis and Futuna Islands",469
+"GABON","Gabon",387
+"GAMBI","Gambia",338
+"GAMIS","French Polynesia",411
+"GDR","German Democratic Republic",112
+"GEORG","Georgia",154
+"GERMA","Germany",112
+"GHANA","Ghana",339
+"GIBRA","Gibraltar",143
+"GILBE","Kiribati",414
+"GOA","India",247
+"GOZO","Malta",145
+"GRBR","United Kingdom",180
+"GREEC","Greece",113
+"GREEN","Greenland",501
+"GRENA","Grenada",520
+"GUADE","Guadeloupe",507
+"GUAM","Guam",404
+"GUATE","Guatemala",577
+"GUERN","United Kingdom",180
+"GUIBI","Guinea-Bissau",327
+"GUINE","Guinea",382
+"GUYAN","Guyana",603
+"HABOM","Japan",252
+"HAITI","Haiti",586
+"HOLLA","Netherlands",123
+"HONDU","Honduras",578
+"HONGK","Hong Kong",206
+"HUNGA","Hungary",114
+"HUONI","New Caledonia",409
+"ICELA","Iceland",115
+"IFNI","Morocco",374
+"INDIA","India",247
+"INDOC","Vietnam",266
+"INDON","Indonesia",248
+"INICA","Dominica",519
+"INNER","China, People's Republic of",245
+"IRAN","Iran",249
+"IRAQ","Iraq",250
+"IRBAR","Indonesia",248
+"IRELA","Ireland",116
+"ISLAS","Spain",129
+"ISLE","United Kingdom",180
+"ISRAE","Israel",251
+"ISSAS","Issas",322
+"ITALY","Italy",117
+"IVORY","Ivory Coast",388
+"JAMAI","Jamaica",514
+"JAPAN","Japan",252
+"JAVA","Indonesia",248
+"JERSE","United Kingdom",180
+"JOHNS","United States",583
+"JORDA","Jordan",253
+"JUNAG","India",247
+"KAMPU","Kampuchea",201
+"KAZAK","Kazakhstan",155
+"KEELI","Cocos Islands",271
+"KENYA","Kenya",340
+"KERMA","New Zealand",464
+"KIRIB","Kiribati",414
+"KOREA","Korea",254
+"KUWAI","Kuwait",272
+"KYRGY","Kyrgyzstan",156
+"LAOS","Laos",203
+"LATVI","Latvia",118
+"LEBAN","Lebanon",255
+"LESOT","Lesotho",335
+"LIBER","Liberia",370
+"LIBYA","Libya",381
+"LIECH","Liechtenstein",119
+"LITHU","Lithuania",120
+"LOWIS","French Polynesia",411
+"LOYAL","New Caledonia",409
+"LUXEM","Luxembourg",121
+"MACAU","Macau",214
+"MACED","Macedonia",167
+"MADAG","Madagascar",320
+"MADEI","Portugal",126
+"MAINL","China, People's Republic of",245
+"MALAW","Malawi",345
+"MALAY","Malaysia",273
+"MALDI","Maldives",220
+"MALI","Mali",392
+"MALTA","Malta",145
+"MALVI","Falkland Islands",604
+"MANCH","China, People's Republic of",245
+"MARIA","Mariana Islands, North",471
+"MARQU","French Polynesia",411
+"MARSH","Marshall Islands",472
+"MARTI","Martinique",511
+"MAUTA","Mauritania",389
+"MAUTI","Mauritius",342
+"MELIL","Spain",129
+"MEXIC","Mexico",582
+"MIDWA","United States",583
+"MIQUE","St. Pierre and Miquelon",502
+"MOLDO","Moldova",157
+"MONAC","Monaco",122
+"MONGO","Mongolia",299
+"MONTS","Montserrat",521
+"MORAN","Jamaica",514
+"MOROC","Morocco",374
+"MOZAM","Mozambique",329
+"MUSCA","Oman",256
+"NAMER","North America",500
+"NAMIB","Namibia",371
+"NANTI","Netherlands Antilles",508
+"NAURU","Nauru",440
+"NBORN","Malaysia",273
+"NEPAL","Nepal",257
+"NETHE","Netherlands",123
+"NEVIS","St. Kitts-Nevis",522
+"NEWCA","New Caledonia",409
+"NEWGU","Papua New Guinea",466
+"NEWHE","Vanuatu",410
+"NEWZE","New Zealand",464
+"NGUIA","Suriname",602
+"NICAR","Nicaragua",579
+"NICOB","India",247
+"NIGE","Niger",390
+"NIGEI","Nigeria",343
+"NIGER","Niger",390
+"NIGIA","Nigeria",343
+"NINDI","Netherlands Antilles",508
+"NIREL","Northern Ireland",180
+"NIUE","Niue",470
+"NKORE","Korea, North",275
+"NMARI","Northern Mariana Islands",471
+"NORFO","Australia",438
+"NORWA","Norway",124
+"NPALE","Jordan",474
+"NQI","Non-quota immigrant",710
+"NQUOT","Non-quota immigrant",710
+"NRHOD","Zambia",344
+"NSTMA","Guadeloupe",508
+"NVIET","North Vietnam",266
+"NYEME","Northern Yemen",280
+"OCEAN","Kiribati",414
+"OKINA","Japan",252
+"OMAN","Oman",256
+"OUTER","China, People's Republic of",245
+"PACIF","Palau",406
+"PAKIS","Pakistan",258
+"PALAU","Palau",474
+"PALES","Jordan",259
+"PANAM","Panama",580
+"PAPUA","Papua New Guinea",466
+"PARAG","Paraguay",693
+"PAUMO","French Polynesia",411
+"PEDRO","Jamaica",514
+"PEMBA","Tanzania",354
+"PERU","Peru",694
+"PGUIN","Guinea-Bissau",327
+"PHILI","Philippines",260
+"PITCA","Pitcairn Islands",416
+"POLAN","Poland",125
+"POLYN","French Polynesia",411
+"PORTU","Portugal",126
+"PR","Puerto Rico",505
+"PRINC","Principe and Sao tome",330
+"PTIMO","Indonesia",248
+"PUERT","Puerto Rico",505
+"QATAR","Qatar",297
+"RALIA","Australia",438
+"RAPAI","French Polynesia",411
+"REUNI","Reunion",321
+"RIOMU","Equatorial Guinea",399
+"ROMAN","Romania",127
+"RUSSI","Russia",158
+"RWAND","Rwanda",376
+"RYUKY","Japan",252
+"SABA","Netherlands Antilles",508
+"SABAH","Malaysia",273
+"SAFRI","South Africa",373
+"SAIPA","Mariana Islands, Northern",406
+"SAKHA","USSR",134
+"SALVA","El Salvador",576
+"SAMER","South America",600
+"SANAA","Sanaa-Yemen",280
+"SANMA","San Marino",128
+"SAOTO","Sao Tome and Principe",330
+"SARAW","Malaysia",273
+"SAUDI","Saudi Arabia",261
+"SCOTL","United Kingdom",180
+"SENEG","Senegal",391
+"SEYCH","Seychelles",347
+"SHIKO","Japan",252
+"SHIP","Born on Board Ship",700
+"SIERR","Sierra Leone",348
+"SIKKI","India",247
+"SINGA","Singapore",207
+"SINKI","China, People's Republic of",245
+"SKORE","Korea, South",276
+"SLOVA","Slovak Republic",141
+"SLOVE","Slovenia",166
+"SNA","Spanish North Africa",129
+"SOCIE","French Polynesia",411
+"SOLOM","Solomons Islands",412
+"SOMAL","Somalia",397
+"SOMBR","St. Vincent-Grenadines",522
+"SPAIN","Spain",129
+"SPSAH","Western Sahara",333
+"SRHOD","Zimbabwe",315
+"SRILA","Sri Lanka",244
+"STATE","Stateless",0
+"STEUS","Netherlands Antilles",508
+"STHEL","St. Helena",346
+"STKIT","St. Kitts-Nevis",522
+"STLUC","St. Lucia",523
+"STMAR","Netherlands Antilles",508
+"STPIE","St. Pierre Miquelon",502
+"STRIA","Austria",103
+"STVIN","St. Vincent/Grenadines",524
+"SUDAN","Sudan",350
+"SURIN","Suriname",602
+"SVALB","Norway",124
+"SVIET","South Vietnam",266
+"SWAIN","American Samoa",403
+"SWAN","Honduras",578
+"SWAZI","Swaziland",351
+"SWEDE","Sweden",130
+"SWITZ","Switzerland",131
+"SYRIA","Syria",262
+"TAIWA","Taiwan",268
+"TAJIK","Tajikistan",159
+"TANGA","Tanzania",354
+"TANGI","Morocco",374
+"TANZA","Tanzania",354
+"TASMA","Australia",438
+"THAIL","Thailand",263
+"TIBET","China, People's Republic of",245
+"TIMOR","Indonesia",248
+"TOBAG","Trinidad and Tobago",516
+"TOGO","Togo",304
+"TOKEL","New Zealand",464
+"TONGA","Tonga",417
+"TORRE","Vanuatu",410
+"TRINI","Trinidad and Tobago",516
+"TRUST","Palau",406
+"TUAMO","French Polynesia",411
+"TUBAU","French Polynesia",411
+"TUNIS","Tunisia",323
+"TURKE","Turkey",264
+"TURKM","Turkmenistan",161
+"TURKS","Turks and Caicos Islands",527
+"TUVAL","Tuvalu",420
+"UAE","United Arab Emirates",296
+"UAL","United Arab Emirates",296
+"UAR","United Arab Republic",368
+"UGAND","Uganda",352
+"UINEA","Guinea",382
+"UISLA","New Zealand",464
+"UK","United Kingdom",180
+"UKRAI","Ukraine",162
+"UNION","New Zealand",464
+"UNKNO","Unknown",999
+"UPPER","Burkina Faso",393
+"URUGU","Uruguay",695
+"US","USA",583
+"USSR","USSR",134
+"UZBEK","Uzbekistan",163
+"VANUA","Vanuatu",410
+"VELEZ","Spain",129
+"VENEZ","Venezuela",696
+"VIETN","Vietnam",266
+"VIRGI","U. S. Virgin Islands",506
+"VOLCA","Japan",252
+"WAKE","United States",583
+"WALES","United Kingdom",180
+"WALLI","Wallis and Futuna Islands",469
+"WASHI","Kiribati",414
+"WGERM","Germany, West",112
+"WNGUI","Indonesia",248
+"WSAHA","Western Sahara",333
+"WSAMO","Western Samoa",465
+"YEMEN","Yemen-Sanaa",280
+"YUGOS","Yugoslavia",139
+"ZAIRE","Zaire",301
+"ZAMBI","Zambia",344
+"ZANZI","Zanzibar",354
+"ZIMBA","Zimbabwe",315

@@ -1,359 +1,117 @@
-# USCIS legacy country-of-birth codes -> full names.
-# Codes appear in older / CLAIMS-3 records as 5-letter (occasionally shorter)
-# uppercase abbreviations. Newer / ELIS records use full English names drawn
-# from the same USCIS country master list.
-# Definitive source: USCIS's own country-code table (5-char C3 code, 3-char
-# ISO code, country name; 589 rows / 433 codes), released as the "Country
-# Codes" tab of the data dictionary in FOIA response TRK-13139 (H-1B I-129
-# data; published at github.com/BloombergGraphics/2024-h1b-immigration-data).
-# Local copy: inputs/reference/uscis_c3_country_codes.csv.
-# Names are modernized here where the official table uses older forms
-# (Kampuchea -> Cambodia, Swaziland -> Eswatini, Ivory Coast -> Cote
-# d'Ivoire, Macedonia -> North Macedonia); historic states are kept
-# distinct with "(historic)".
-# Codes NOT in the official table but common in the data are mapped as
-# obvious typos/variants (HODNU/HOUDU/... = Honduras, ELSA/ESAL/... =
-# El Salvador, BANAM = Panama, SOMOL = Somalia, USA/U.S. = United States,
-# UNKN = Unknown, NICA = Nicaragua, WAFRI = West Africa, YORO = Yoro).
-# Intentionally left unmapped (absent from the official table and not
-# resolvable): receipt-number prefixes (EAC09, MSC09), A-number-like
-# strings (A0744 etc.), pure numerics, address fragments (PO BO, 51 BE,
-# 62 HI, Q), Central American city/department names entered as countries
-# (MANAG, COMAY, VALLE, NARAN, MAGDA, CONCE, DURHA), unconfirmed
-# El Salvador-like strings (SSAL, USELS, RUELS, RUSEL, SDELS), and
-# ambiguous strings (UNITE, CUS, COAST, USHON, USNIC).
+# USCIS country-of-birth codes -> full names.
 
-library(tibble)
-
-uscis_country_codes <- tribble(
-  ~code, ~country,
-  "ELSAL", "El Salvador",
-  "SALVA", "El Salvador",
-  "ESAL", "El Salvador",
-  "ELSA", "El Salvador",
-  "EL", "El Salvador",
-  "EL SA", "El Salvador",
-  "ELAL", "El Salvador",
-  "ELASL", "El Salvador",
-  "ELSA;", "El Salvador",
-  "ELSAV", "El Salvador",
-  "ELSLA", "El Salvador",
-  "ESSAL", "El Salvador",
-  "UELSA", "El Salvador",
-  "HODNU", "Honduras",
-  "HOUDU", "Honduras",
-  "HONOD", "Honduras",
-  "HONUD", "Honduras",
-  "HONU", "Honduras",
-  "HOUND", "Honduras",
-  "HOND", "Honduras",
-  "HODU", "Honduras",
-  "HNDU", "Honduras",
-  "HONDU", "Honduras",
-  "HONDI", "Honduras",
-  "2HOND", "Honduras",
-  "H0NDU", "Honduras",
-  "UHOND", "Honduras",
-  "MEXIC", "Mexico",
-  "HAITI", "Haiti",
-  "DR", "Dominican Republic",
-  # official table: DOMIN = Dominica; the Dominican Republic uses DR
-  "DOMIN", "Dominica",
-  "INDIA", "India",
-  "CHINA", "China",
-  "JAMAI", "Jamaica",
-  "UNKNO", "Unknown",
-  "UNKN", "Unknown",
-  "PHILI", "Philippines",
-  "COLOM", "Colombia",
-  "ECUAD", "Ecuador",
-  "GUATE", "Guatemala",
-  "PERU", "Peru",
-  "VIETN", "Vietnam",
-  "NVIET", "Vietnam",
-  "NICAR", "Nicaragua",
-  "NICA", "Nicaragua",
-  "GUYAN", "Guyana",
-  "POLAN", "Poland",
-  "PAKIS", "Pakistan",
-  "UKRAI", "Ukraine",
-  "SKORE", "South Korea",
-  "KOREA", "Korea",
-  "RUSSI", "Russia",
-  "BANGL", "Bangladesh",
-  "NEPAL", "Nepal",
-  "BRAZI", "Brazil",
-  "TRINI", "Trinidad and Tobago",
-  "TOBAG", "Trinidad and Tobago",
-  "LIBER", "Liberia",
-  "SYRIA", "Syria",
-  "NIGIA", "Nigeria",
-  "NIGEI", "Nigeria",
-  "UK", "United Kingdom",
-  "GHANA", "Ghana",
-  "IRAN", "Iran",
-  "EGYPT", "Egypt",
-  "PORTU", "Portugal",
-  "CANAD", "Canada",
-  "ALBAN", "Albania",
-  "ARGEN", "Argentina",
-  "TAIWA", "Taiwan",
-  "BAHAM", "Bahamas",
-  "USSR", "USSR (historic)",
-  "YUGOS", "Yugoslavia (historic)",
-  "VENEZ", "Venezuela",
-  "BOSNI", "Bosnia and Herzegovina",
-  "ITALY", "Italy",
-  "ETHIO", "Ethiopia",
-  "MOROC", "Morocco",
-  "TURKE", "Turkey",
-  "IRELA", "Ireland",
-  "HONGK", "Hong Kong",
-  "BOLIV", "Bolivia",
-  "UZBEK", "Uzbekistan",
-  "ISRAE", "Israel",
-  "SIERR", "Sierra Leone",
-  "CUBA", "Cuba",
-  "ROMAN", "Romania",
-  "SUDAN", "Sudan",
-  "SOSUD", "South Sudan",
-  "GERMA", "Germany",
-  "EGERM", "East Germany (historic)",
-  "LEBAN", "Lebanon",
-  "SOMAL", "Somalia",
-  "THAIL", "Thailand",
-  "KAMPU", "Cambodia",
-  "CAMBO", "Cambodia",
-  "COSTA", "Costa Rica",
-  "CAPEV", "Cape Verde",
-  "YEMEN", "Yemen",
-  "CHILE", "Chile",
-  "JORDA", "Jordan",
-  "BYELA", "Belarus",
-  "BELAR", "Belarus",
-  "URUGU", "Uruguay",
-  "FRANC", "France",
-  "GREEC", "Greece",
-  "AFGHA", "Afghanistan",
-  "PANAM", "Panama",
-  "BANAM", "Panama",
-  "BULGA", "Bulgaria",
-  "BARBA", "Barbados",
-  "KENYA", "Kenya",
-  "GRENA", "Grenada",
-  "LAOS", "Laos",
-  "AZERB", "Azerbaijan",
-  "IRAQ", "Iraq",
-  "JAPAN", "Japan",
-  "SPAIN", "Spain",
-  "MALAY", "Malaysia",
-  "STVIN", "St Vincent and the Grenadines",
-  "STLUC", "St Lucia",
-  "BELIZ", "Belize",
-  "SAFRI", "South Africa",
-  "INDON", "Indonesia",
-  "SRILA", "Sri Lanka",
-  "CEYLO", "Sri Lanka",
-  "MOLDO", "Moldova",
-  "SAUDI", "Saudi Arabia",
-  "US", "United States",
-  "USA", "United States",
-  "U.S", "United States",
-  "U.S.", "United States",
-  "CAMER", "Cameroon",
-  "ALGER", "Algeria",
-  "BURMA", "Burma (Myanmar)",
-  "MACED", "North Macedonia",
-  "ANTIG", "Antigua and Barbuda",
-  "GUINE", "Guinea",
-  "UINEA", "Guinea",
-  "KAZAK", "Kazakhstan",
-  "HUNGA", "Hungary",
-  "SENEG", "Senegal",
-  "RALIA", "Australia",
-  # official table: AUSTR = Austral Islands, French Polynesia -- NOT
-  # Australia (RALIA/TASMA) or Austria (STRIA). Kept distinct rather than
-  # merged into French Polynesia so possible data-entry misuse for
-  # Australia/Austria stays visible in outputs.
-  "AUSTR", "Austral Islands (French Polynesia)",
-  "GEORG", "Georgia",
-  "CROAT", "Croatia",
-  "STKIT", "St Kitts and Nevis",
-  "SWEDE", "Sweden",
-  "KUWAI", "Kuwait",
-  "LITHU", "Lithuania",
-  "ARMEN", "Armenia",
-  "NETHE", "Netherlands",
-  "HOLLA", "Netherlands",
-  "IVORY", "Cote d'Ivoire",
-  "COTED", "Cote d'Ivoire",
-  "PARAG", "Paraguay",
-  "SLOVA", "Slovakia",
-  "ERITR", "Eritrea",
-  "UAE", "United Arab Emirates",
-  "TANZA", "Tanzania",
-  "UGAND", "Uganda",
-  "MONGO", "Mongolia",
-  "SWITZ", "Switzerland",
-  "LATVI", "Latvia",
-  # official table: CZECH = Czechoslovakia; the Czech Republic uses CZREP
-  "CZECH", "Czechoslovakia (historic)",
-  "CZREP", "Czechia",
-  "TOGO", "Togo",
-  "GAMBI", "Gambia",
-  "TAJIK", "Tajikistan",
-  "PALES", "Palestinian Territories",
-  "SURIN", "Suriname",
-  "TUNIS", "Tunisia",
-  "ZAMBI", "Zambia",
-  "ZIMBA", "Zimbabwe",
-  "NEWZE", "New Zealand",
-  "BELGI", "Belgium",
-  "ANGOL", "Angola",
-  "SINGA", "Singapore",
-  "FINLA", "Finland",
-  # official table: CONGO = Congo-Brazzaville (COG); the DRC is DECON/CONKI
-  "CONGO", "Republic of the Congo",
-  "DECON", "Democratic Republic of the Congo",
-  "CONKI", "Democratic Republic of the Congo",
-  "MALI", "Mali",
-  "CYPRU", "Cyprus",
-  "KYRGY", "Kyrgyzstan",
-  "MONTS", "Montserrat",
-  "ESTON", "Estonia",
-  "LIBYA", "Libya",
-  "DENMA", "Denmark",
-  "FIJI", "Fiji",
-  "MACAU", "Macau",
-  "MALTA", "Malta",
-  "NORWA", "Norway",
-  "SERBI", "Serbia",
-  "TURKS", "Turks and Caicos Islands",
-  "CAICO", "Turks and Caicos Islands",
-  "MALAW", "Malawi",
-  "BURUN", "Burundi",
-  "BENIN", "Benin",
-  "ANTIL", "Netherlands Antilles (historic)",
-  "RWAND", "Rwanda",
-  "TURKM", "Turkmenistan",
-  "QATAR", "Qatar",
-  "GUADE", "Guadeloupe",
-  "BVI", "British Virgin Islands",
-  # official table: VIRGI = U. S. Virgin Islands
-  "VIRGI", "U.S. Virgin Islands",
-  "BAHRA", "Bahrain",
-  "BERMU", "Bermuda",
-  "ZAIRE", "Zaire (historic)",
-  "MOZAM", "Mozambique",
-  "SLOVE", "Slovenia",
-  "BURKI", "Burkina Faso",
-  "ARUBA", "Aruba",
-  "ICELA", "Iceland",
-  "ANGUI", "Anguilla",
-  "TONGA", "Tonga",
-  "MADAG", "Madagascar",
-  "GABON", "Gabon",
-  "MONTE", "Montenegro",
-  "NIGER", "Niger",
-  "STATE", "Stateless",
-  "PUERT", "Puerto Rico",
-  "ASAMO", "American Samoa",
-  "GUAM", "Guam",
-  "NMARI", "Northern Mariana Islands",
-  "MARIA", "Northern Mariana Islands",
-  "KOSOV", "Kosovo",
-  "LESOT", "Lesotho",
-  "BHUTA", "Bhutan",
-  "LUXEM", "Luxembourg",
-  "SWAZI", "Eswatini",
-  "SEYCH", "Seychelles",
-  "SAOTO", "Sao Tome and Principe",
-  "FRGUI", "French Guiana",
-  # official table: ARABI = Arabian Peninsula, not Saudi Arabia
-  "ARABI", "Arabian Peninsula (unspecified)",
-  "EQUAT", "Equatorial Guinea",
-  "PAPUA", "Papua New Guinea",
-  "PALAU", "Palau",
-  "CURAC", "Curacao",
-  "AFRIC", "Africa (unspecified)",
-  "GIBRA", "Gibraltar",
-  "POLYN", "French Polynesia",
-  "FPOLY", "French Polynesia",
-  "COMOR", "Comoros",
-  "MARSH", "Marshall Islands",
-  "NEWCA", "New Caledonia",
-  "FSM", "Federated States of Micronesia",
-  # official table: FSTMA = French St. Martins Island (listed under
-  # Guadeloupe), not Micronesia
-  "FSTMA", "St Martin",
-  "MONAC", "Monaco",
-  "NAURU", "Nauru",
-  # UNITE removed: ambiguous truncation of United States/Kingdom/Arab Emirates,
-  # and ELIS itself leaves it as "Unlisted Entry"
-  "ANDOR", "Andorra",
-  "ETMOR", "Timor-Leste",
-  "EUROP", "Europe (unspecified)",
-  "GREEN", "Greenland",
-  "SOLOM", "Solomon Islands",
-  "STMAF", "St Martin",
-  # official table: STMAR = Sint Maarten (Dutch side)
-  "STMAR", "Sint Maarten",
-  "TIBET", "Tibet",
-  "MALDI", "Maldives",
-  "NIREL", "Northern Ireland",
-  "GRBR", "Great Britain",
-  "SOMOL", "Somalia",
-  "YORO", "Yoro (Honduras dept.)",
-
-  # Additional codes, all confirmed against the official table
-  "BISSA", "Guinea-Bissau",
-  "BOTSW", "Botswana",
-  "BRUNE", "Brunei",
-  "BVIRG", "British Virgin Islands",
-  "CAFRI", "Central African Republic",
-  "CAYMA", "Cayman Islands",
-  "CENTR", "Central African Republic",
-  "CHAD", "Chad",
-  "DJIBO", "Djibouti",
-  "ENGLA", "England",
-  "FGUIA", "French Guiana",
-  "MARTI", "Martinique",
-  "MAUTA", "Mauritania",
-  "MAUTI", "Mauritius",
-  "MAYOT", "Mayotte",
-  "NAMIB", "Namibia",
-  "NKORE", "North Korea",
-  "OMAN", "Oman",
-  "SAMOA", "Samoa",
-  "SRBIA", "Serbia and Montenegro (historic)",
-  "TOKEL", "Tokelau",
-  "TUVAL", "Tuvalu",
-  "WGERM", "West Germany (historic)",
-  "WSAMO", "Samoa", # Western Samoa
-
-  "FALKL", "Falkland Islands",
-  "MIDWA", "Midway Islands",
-  "NANTI", "Netherlands Antilles (historic)",
-  # official table: NSTMA = Guadeloupe (the French/northern side of
-  # St Martin was administered as part of Guadeloupe until 2007)
-  "NSTMA", "St Martin",
-  "NYEME", "North Yemen (historic)",
-  "SIKKI", "Sikkim",
-  "SOCIE", "French Polynesia", # Society Islands
-  "STRIA", "Austria",
-  "WAKE", "Wake Island",
-  "SANMA", "San Marino",
-  "KV", "Kosovo",
-  "CVI", "Cape Verde",
-  "SWAN", "Honduras", # Swan Island
-  "NINDI", "Netherlands Antilles (historic)",
-  "INICA", "Dominica", # official table lists the "Incia" typo too
-  "TUBAU", "French Polynesia", # Tubuai Islands
-  "UAL", "United Arab Emirates",
-  "MORAN", "Jamaica", # Morant Cays
-  "SOMBR", "St Vincent and the Grenadines", # Sombrero
-  "JOHNS", "Johnston Atoll",
-
-  # not in the official table; presumed West Africa (cf. AFRIC = Africa)
-  "WAFRI", "West Africa (unspecified)"
+# Codes the 2001 list from AILA does not list, plus the handful whose 2001 name is
+# wrong or is not the spelling these current data use. Entered by hand; each name
+# below is one the ELIS records themselves use, except where noted.
+uscis_country_codes_manual <- tribble(
+  ~code   , ~country                           ,
+  # -- absent from the 2001 list ------------------------------------------
+  "SOSUD" , "South Sudan"                      , # independent 2011
+  "ETMOR" , "East Timor"                       , # independent 2002; absent from these data
+  "MONTE" , "Montenegro"                       , # independent 2006
+  "KV"    , "Kosovo"                           , # independent 2008
+  "SRBIA" , "Serbia"                           ,
+  "SERBI" , "Serbia and Montenegro"            ,
+  "BELAR" , "Belarus"                          ,
+  "COTED" , "Côte d'Ivoire"                    ,
+  "ANGUI" , "Anguilla"                         , # the list has ANQUI = Anguilla
+  "FRGUI" , "French Guiana"                    , # the list has FGUIA = French Guiana
+  "SAMOA" , "Samoa"                            , # the list has WSAMO = Western Samoa
+  "STMAF" , "Saint Martin"                     ,
+  "MAYOT" , "Mayotte"                          ,
+  # -- 2001 name is wrong ---------------------------------------------------
+  "YEMEN" , "Yemen"                            , # list says "Yemen-Sanaa"
+  "PALES" , "Palestine, State of"              , # list says "Jordan"
+  # -- 2001 name is an obsolete form the ELIS records have moved on from ----
+  # each would otherwise strand records on a label ELIS barely uses:
+  # "Kampuchea" has 1 ELIS record against 211 for Cambodia, "Byelarus" 2
+  # against 581 for Belarus, and "Ivory Coast" 5 against 514 for Côte d'Ivoire
+  "CAMBO" , "Cambodia"                         , # list says "Kampuchea"
+  "BYELA" , "Belarus"                          , # list says "Byelarus"
+  "IVORY" , "Côte d'Ivoire"                    , # list says "Ivory Coast"
+  # -- 2001 name is right but not how these data spell it -------------------
+  "CHINA" , "China"                            , # list says "China, People's Republic of"
+  "TIBET" , "Tibet"                            , # list says "China, People's Republic of"
+  "SKORE" , "South Korea"                      , # list says "Korea, South"
+  "NKORE" , "North Korea"                      , # list says "Korea, North"
+  "US"    , "United States"                    , # list says "USA"
+  "USSR"  , "Soviet Union"                     , # list says "USSR"
+  "DECON" , "Democratic Republic of the Congo" , # list says "Democratic Republic of Congo"
+  "CONGO" , "Congo-Brazzaville"                , # list says "Congo"; DECON is the DRC
+  "STVIN" , "St. Vincent-Grenadines"           , # list says "St. Vincent/Grenadines"
+  "BRUNE" , "Brunei Darussalam"                , # list says "Brunei"
+  "WGERM" , "West Germany"                     , # list says "Germany, West"
+  "FSM"   , "Micronesia, Federated States of"  , # list says "Federated States of Micronesia"
+  "TURKE" , "Turkiye"                          , # list says "Turkey"
+  # the list calls all five of these "French Polynesia"; ELIS says "Polynesia"
+  "POLYN" , "Polynesia"                        ,
+  "FPOLY" , "Polynesia"                        ,
+  "SOCIE" , "Polynesia"                        , # Society Islands
+  "TUBAU" , "Polynesia"                        , # Tubuai Islands
+  "AUSTR" , "Polynesia" # Austral Islands
 )
+
+# Codes in neither the list nor the table above, each an unmistakable
+# data-entry variant of a code that is in them. They inherit whatever name
+# the canonical code resolves to.
+uscis_country_code_aliases <- tribble(
+  ~code   , ~canonical ,
+  # ELSAL = El Salvador
+  "ESAL"  , "ELSAL"    ,
+  "ELSA"  , "ELSAL"    ,
+  "EL"    , "ELSAL"    ,
+  "EL SA" , "ELSAL"    ,
+  "ELAL"  , "ELSAL"    ,
+  "ELASL" , "ELSAL"    ,
+  "ELSA;" , "ELSAL"    ,
+  "ELSAV" , "ELSAL"    ,
+  "ELSLA" , "ELSAL"    ,
+  "ESSAL" , "ELSAL"    ,
+  "UELSA" , "ELSAL"    ,
+  # HONDU = Honduras
+  "HODNU" , "HONDU"    ,
+  "HOUDU" , "HONDU"    ,
+  "HONOD" , "HONDU"    ,
+  "HONUD" , "HONDU"    ,
+  "HONU"  , "HONDU"    ,
+  "HOUND" , "HONDU"    ,
+  "HOND"  , "HONDU"    ,
+  "HODU"  , "HONDU"    ,
+  "HNDU"  , "HONDU"    ,
+  "HONDI" , "HONDU"    ,
+  "2HOND" , "HONDU"    ,
+  "H0NDU" , "HONDU"    ,
+  "UHOND" , "HONDU"    ,
+  "YORO"  , "HONDU"    , # a department of Honduras, not a country
+  # NICAR = Nicaragua
+  "NICA"  , "NICAR"    ,
+  # PANAM = Panama
+  "BANAM" , "PANAM"    ,
+  # SOMAL = Somalia
+  "SOMOL" , "SOMAL"    ,
+  # US = United States
+  "USA"   , "US"       ,
+  "U.S"   , "US"       ,
+  "U.S."  , "US"       ,
+  # UNKNO = Unknown
+  "UNKN"  , "UNKNO"    ,
+  # AFRIC = Africa; WAFRI is presumed the same, at less precision
+  "WAFRI" , "AFRIC"
+)
+
+# the 2001 list, with the manual layer applied over it
+uscis_country_codes <-
+  read_csv(
+    "inputs/reference/ins_claims_country_codes_2001.csv",
+    show_col_types = FALSE
+  ) |>
+  select(code, country = name) |>
+  rows_upsert(uscis_country_codes_manual, by = "code")
+
+# then the misspellings, each taking the name its canonical code resolved to
+uscis_country_codes <-
+  uscis_country_code_aliases |>
+  left_join(uscis_country_codes, join_by(canonical == code)) |>
+  select(code, country) |>
+  bind_rows(uscis_country_codes) |>
+  arrange(code)
