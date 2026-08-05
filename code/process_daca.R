@@ -15,7 +15,7 @@ daca_df <-
     ben_country_of_birth = case_when(
       data_source == "ELIS" ~ repair_double_encoded_utf8(ben_country_of_birth),
       !is.na(country) ~ country,
-      .default = NA_character_
+      .default = "Unlisted Entry (Any foreign country not listed)"
     ),
     # recode gender and form type given differences across C3 and ELIS
     ben_gender = replace_values(
@@ -51,11 +51,12 @@ daca_df <-
     ),
     .by = c(unique_alien_id_nona, duplicate_identifier)
   ) |>
+  select(-unique_alien_id_nona) |>
   mutate(
     duplicate_drop_row = coalesce(duplicate_likely, FALSE) &
       !duplicate_first
   ) |>
   relocate(form_id, label, file_original, row_original, .after = last_col())
 
-arrow::write_parquet(daca_df, "data/daca.parquet", compression = "zstd")
-write_xlsx_by_fy(daca_df, "data/daca.xlsx", label = "DACA")
+arrow::write_parquet(daca_df, "data/daca-latest.parquet", compression = "zstd")
+write_xlsx_by_fy(daca_df, "data/daca-latest.xlsx", label = "DACA")
