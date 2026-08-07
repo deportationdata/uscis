@@ -3,10 +3,14 @@ library(tidyverse)
 source("code/country_codes.R")
 source("code/functions/repair_double_encoded_utf8.R")
 source("code/functions/write_xlsx_by_fy.R")
+source("code/functions/is_not_blank_or_redacted.R")
 
 daca_df <-
   arrow::open_dataset("data/staging/i821d") |>
   collect() |>
+  select(-form_id, -label) |>
+  # remove columns that are fully blank (all NA) or fully redacted
+  select(where(is_not_blank_or_redacted)) |>
   # C3 records store country of birth as a 5-letter code, ELIS records store
   # the full name, so map the codes and keep the names as they are.
   left_join(uscis_country_codes, by = join_by(ben_country_of_birth == code)) |>
@@ -23,11 +27,6 @@ daca_df <-
       "F" ~ "Female",
       "M" ~ "Male",
       "U" ~ "Unknown"
-    ),
-    form_type = recode_values(
-      form_type,
-      "This is my annual registration/re-registration application" ~ "TPS - Re-registration",
-      "This is my first application" ~ "TPS - Initial"
     )
   ) |>
   select(-country) |>
@@ -43,7 +42,7 @@ daca_df <-
     .by = unique_alien_id_nona
   ) |>
   mutate(
-    duplicate_first = row_number() == 1L,
+    duplicate_last = row_number() == n(),
     duplicate_likely = if_else(
       is.na(unique_alien_id) | is.na(rec_date),
       NA,
@@ -54,9 +53,9 @@ daca_df <-
   select(-unique_alien_id_nona) |>
   mutate(
     duplicate_drop_row = coalesce(duplicate_likely, FALSE) &
-      !duplicate_first
+      !duplicate_last
   ) |>
-  relocate(form_id, label, file_original, row_original, .after = last_col())
+  relocate(file_original, row_original, .after = last_col())
 
 arrow::write_parquet(daca_df, "data/daca-latest.parquet", compression = "zstd")
 write_xlsx_by_fy(daca_df, "data/daca-latest.xlsx", label = "DACA")

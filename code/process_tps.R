@@ -3,10 +3,14 @@ library(tidyverse)
 source("code/country_codes.R")
 source("code/functions/repair_double_encoded_utf8.R")
 source("code/functions/write_xlsx_by_fy.R")
+source("code/functions/is_not_blank_or_redacted.R")
 
 tps_df <-
   arrow::open_dataset("data/staging/i821") |>
   collect() |>
+  select(-form_id, -label) |>
+  # remove columns that are fully blank (all NA) or fully redacted
+  select(where(is_not_blank_or_redacted)) |>
   # C3 records store country of birth as a 5-letter code, ELIS records store
   # the full name, so map the codes and keep the names as they are.
   left_join(uscis_country_codes, by = join_by(ben_country_of_birth == code)) |>
@@ -37,13 +41,19 @@ tps_df <-
       paste0("noid_", row_number())
     )
   ) |>
-  arrange(unique_alien_id_nona, rec_date, file_original, row_original) |>
+  arrange(
+    unique_alien_id_nona,
+    rec_date,
+    decision_date,
+    file_original,
+    row_original
+  ) |>
   mutate(
     duplicate_identifier = cumsum(coalesce(rec_date != lag(rec_date), TRUE)),
     .by = unique_alien_id_nona
   ) |>
   mutate(
-    duplicate_first = row_number() == 1L,
+    duplicate_last = row_number() == n(),
     duplicate_likely = if_else(
       is.na(unique_alien_id) | is.na(rec_date),
       NA,
@@ -54,9 +64,9 @@ tps_df <-
   select(-unique_alien_id_nona) |>
   mutate(
     duplicate_drop_row = coalesce(duplicate_likely, FALSE) &
-      !duplicate_first
+      !duplicate_last
   ) |>
-  relocate(form_id, label, file_original, row_original, .after = last_col())
+  relocate(file_original, row_original, .after = last_col())
 
 arrow::write_parquet(tps_df, "data/tps-latest.parquet", compression = "zstd")
 write_xlsx_by_fy(tps_df, "data/tps-latest.xlsx", label = "TPS")
