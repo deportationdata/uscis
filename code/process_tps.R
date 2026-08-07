@@ -22,13 +22,13 @@ tps_df <-
       .default = "Unlisted Entry (Any foreign country not listed)"
     ),
     # recode gender and form type given differences across C3 and ELIS
-    ben_gender = recode_values(
+    ben_gender = replace_values(
       ben_gender,
       "F" ~ "Female",
       "M" ~ "Male",
       "U" ~ "Unknown"
     ),
-    form_type = recode_values(
+    form_type = replace_values(
       form_type,
       "This is my annual registration/re-registration application" ~ "TPS - Re-registration",
       "This is my first application" ~ "TPS - Initial"
