@@ -40,8 +40,8 @@ tps <- tps |>
 
       })
 
-tps_unique <- tps |>
-    distinct(unique_alien_id, .keep_all=TRUE)
+# tps_unique <- tps |>
+#     distinct(unique_alien_id, .keep_all=TRUE)
 
 ### Check if this can get close to published TPS approval statistics
 # Each TPS designation has different expiration timeline ranging from 6-18 months, here we test each of these thresholds
@@ -202,5 +202,100 @@ p2.2 <- tps |>
   geom_line()
 
 p2.2
+
+####
+
+# Calculate approx approvals per quarter for full run of data, compare to CRS reports
+# Overall trends
+
+tps_start <- min(tps$rec_date, na.rm = TRUE)
+tps_end <- max(tps$rec_date, na.rm = TRUE)
+
+tps_quarterly <- seq(tps_start, tps_end, by = "quarter")
+
+results <- map_df(tps_quarterly, function(v) {
+  
+  point_in_time_minus_6 <- v - days(182)
+  point_in_time_minus_12 <- v - days(364)
+  point_in_time_minus_18 <- v - days(546)
+
+  tps |> 
+    filter(decision_date <= v) |> 
+    group_by(unique_alien_id) |> 
+    mutate(latest_approved_decision = last(decision_date["Approved" %in% decision])) |>
+    ungroup() |>
+    distinct(unique_alien_id, .keep_all = TRUE) |> 
+    mutate(latest_approved_within_6_mos = point_in_time_minus_6 <= latest_approved_decision,
+           latest_approved_within_12_mos = point_in_time_minus_12 <= latest_approved_decision,
+           latest_approved_within_18_mos = point_in_time_minus_18 <= latest_approved_decision) |> 
+    group_by(ben_country_of_birth) |> 
+    summarise(approved_within_6 = sum(latest_approved_within_6_mos, na.rm=TRUE),
+              approved_within_12 = sum(latest_approved_within_12_mos, na.rm=TRUE),
+              approved_within_18 = sum(latest_approved_within_18_mos, na.rm=TRUE)) |> 
+  mutate(quarter = v)
+
+})
+
+
+dat <- results |> 
+  mutate(country = case_when(ben_country_of_birth %in% unique(crs_long$country) ~ ben_country_of_birth,
+                            TRUE ~ "All other countries")) |> 
+  group_by(country, quarter) |> 
+  summarize(across(where(is.integer), \(x) sum(x, na.rm=TRUE))) |> 
+  pivot_longer(-c(country, quarter), names_to="source", values_to = "value") |> 
+  rename(report_date = quarter) |> 
+  rbind(crs_long) |> 
+  rename(date = report_date)
+
+# Eyeballing: General trends look reasonable
+
+p1 <- dat |> 
+  ggplot(aes(x = date, y = value, color = source, group=source)) +
+  geom_line() +
+  facet_wrap(~country, scales="free_y") +
+  labs(title = "Estimated individuals with approved TPS over time")
+
+p1
+
+p1.1 <- dat |> 
+  filter(country %in% c("Haiti", "Venezuela", "El Salvador", "Ukraine")) |> 
+  ggplot(aes(x = date, y = value, color = source, group=source)) +
+  geom_line() +
+  facet_wrap(~country, scales="free_y") +
+  labs(title = "Estimated individuals with approved TPS over time vs. CRS",
+subtitle = "Selected countries")
+
+p1.1
+
+p1.2 <- dat |> 
+  filter(country %in% c("El Salvador", "Honduras", "Nicaragua")) |> 
+  ggplot(aes(x = date, y = value, color = source, group=source)) +
+  geom_line() +
+  facet_wrap(~country, scales="free_y") +
+  labs(title = "Estimated individuals with approved TPS over time vs. CRS",
+subtitle = "Selected countries")
+
+p1.2
+
+p1.3 <- dat |> 
+  filter(country %in% c("Liberia", "Sudan", "South Sudan", "Yemen", "Somalia", "Syria")) |> 
+  ggplot(aes(x = date, y = value, color = source, group=source)) +
+  geom_line() +
+  facet_wrap(~country, scales="free_y") +
+  labs(title = "Estimated individuals with approved TPS over time vs. CRS",
+subtitle = "Selected countries")
+
+p1.3
+
+p1.4 <- dat |> 
+  filter(date >= "2010-01-01",
+          country %in% c("Haiti", "Ukraine", "Venezuela")) |> 
+  ggplot(aes(x = date, y = value, color = source, group=source)) +
+  geom_line() +
+  facet_wrap(~country, scales="free_y") +
+  labs(title = "Estimated individuals with approved TPS over time vs. CRS",
+subtitle = "Selected countries")
+
+p1.4
 
 # END.
