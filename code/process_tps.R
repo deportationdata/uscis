@@ -1,4 +1,4 @@
-library(tidyverse)
+library(tidyverse, writexl)
 
 source("code/country_codes.R")
 source("code/functions/repair_double_encoded_utf8.R")
