@@ -1,4 +1,6 @@
-library(tidyverse, writexl)
+library(tidyverse)
+library(tidylog)
+library(writexl)
 
 source("code/country_codes.R")
 source("code/functions/repair_double_encoded_utf8.R")
@@ -32,32 +34,84 @@ daca_df <-
     )
   ) |>
   select(-country) |>
+  # standardize unique identifier field
+  rename(unique_identifier = unique_alien_id) |>
   mutate(
-    unique_alien_id_nona = coalesce(
-      unique_alien_id,
+    unique_identifier_nona = coalesce(
+      unique_identifier,
       paste0("noid_", row_number())
     )
   ) |>
-  arrange(unique_alien_id_nona, rec_date, file_original, row_original) |>
+  arrange(unique_identifier_nona, rec_date, file_original, row_original) |>
   mutate(
     duplicate_identifier = cumsum(coalesce(rec_date != lag(rec_date), TRUE)),
-    .by = unique_alien_id_nona
+    .by = unique_identifier_nona
   ) |>
   mutate(
     duplicate_last = row_number() == n(),
     duplicate_likely = if_else(
-      is.na(unique_alien_id) | is.na(rec_date),
+      is.na(unique_identifier) | is.na(rec_date),
       NA,
       n() > 1L
     ),
-    .by = c(unique_alien_id_nona, duplicate_identifier)
+    .by = c(unique_identifier_nona, duplicate_identifier)
   ) |>
-  select(-unique_alien_id_nona) |>
+  select(-unique_identifier_nona) |>
   mutate(
     duplicate_drop_row = coalesce(duplicate_likely, FALSE) &
       !duplicate_last
   ) |>
   relocate(row_redacted, file_original, row_original, .after = last_col())
 
-arrow::write_parquet(daca_df, "data/daca-latest.parquet", compression = "zstd")
+# drop fully-redacted rows
+nrow_pre <- nrow(daca_df)
+
+redacted_rows <- sum(daca_df$row_redacted)
+
+daca_df <- daca_df |> 
+  filter(row_redacted == FALSE) |> 
+  select(-row_redacted)
+
+nrow_post <- nrow(daca_df)
+
+stopifnot((nrow_pre - nrow_post) == redacted_rows)
+
+# separate ELIS records and records missing unique identifier from C3 records
+# create `form_type_filled` values for C3 records to match ELIS format
+# re-concatenate data subsets and check that no rows were dropped or added
+nrow_pre <- nrow(daca_df)
+
+dat_elis_noid <- daca_df |> 
+  filter(data_source == "ELIS" | is.na(unique_identifier)) |> 
+  mutate(form_type_filled = form_type)
+
+dat_c3 <- daca_df |> 
+  filter(data_source == "C3",
+         !is.na(unique_identifier)) |> 
+  arrange(unique_identifier, decision_date) |> 
+  group_by(unique_identifier) |> 
+  mutate(
+    is_approval = decision == "Approved",
+    n_approvals = cumsum(is_approval),
+    likely_initial = n_approvals <= 1,
+  ) |> 
+  ungroup() |> 
+  mutate(form_type_filled = case_when(likely_initial == TRUE ~ "DACA - Initial",
+                                      likely_initial == FALSE ~ "DACA - Renewal",
+                                      TRUE ~ NA)) |> 
+  select(-c(is_approval, n_approvals, likely_initial))
+
+daca_df <- rbind(dat_elis_noid, dat_c3)
+
+nrow_post <- nrow(daca_df)
+
+stopifnot(nrow_post == nrow_pre)
+
+rm(dat_elis_noid, dat_c3)
+
+arrow::write_parquet(daca_df, "data/daca-latest.parquet", compression = "zstd") |> 
+  haven::write_dta("data/daca-latest.dta")
+haven::write_sav(daca_df, "data/daca-latest.sav")
 write_xlsx_by_fy(daca_df, "data/daca-latest.xlsx", label = "DACA")
+
+# END.
