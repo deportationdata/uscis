@@ -77,13 +77,13 @@ nrow_post <- nrow(daca_df)
 stopifnot((nrow_pre - nrow_post) == redacted_rows)
 
 # separate ELIS records and records missing unique identifier from C3 records
-# create `form_type_filled` values for C3 records to match ELIS format
+# create `form_type_filled_in` values for C3 records to match ELIS format
 # re-concatenate data subsets and check that no rows were dropped or added
 nrow_pre <- nrow(daca_df)
 
 dat_elis_noid <- daca_df |> 
   filter(data_source == "ELIS" | is.na(unique_identifier)) |> 
-  mutate(form_type_filled = form_type)
+  mutate(form_type_filled_in = form_type)
 
 dat_c3 <- daca_df |> 
   filter(data_source == "C3",
@@ -96,7 +96,7 @@ dat_c3 <- daca_df |>
     likely_initial = n_approvals <= 1,
   ) |> 
   ungroup() |> 
-  mutate(form_type_filled = case_when(likely_initial == TRUE ~ "DACA - Initial",
+  mutate(form_type_filled_in = case_when(likely_initial == TRUE ~ "DACA - Initial",
                                       likely_initial == FALSE ~ "DACA - Renewal",
                                       TRUE ~ NA)) |> 
   select(-c(is_approval, n_approvals, likely_initial))
