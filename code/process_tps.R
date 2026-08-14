@@ -37,14 +37,16 @@ tps_df <-
     )
   ) |>
   select(-country) |>
+  # standardize unique identifier field
+  rename(unique_identifier = unique_alien_id) |>
   mutate(
-    unique_alien_id_nona = coalesce(
-      unique_alien_id,
+    unique_identifier_nona = coalesce(
+      unique_identifier,
       paste0("noid_", row_number())
     )
   ) |>
   arrange(
-    unique_alien_id_nona,
+    unique_identifier_nona,
     rec_date,
     decision_date,
     file_original,
@@ -52,23 +54,40 @@ tps_df <-
   ) |>
   mutate(
     duplicate_identifier = cumsum(coalesce(rec_date != lag(rec_date), TRUE)),
-    .by = unique_alien_id_nona
+    .by = unique_identifier_nona
   ) |>
   mutate(
     duplicate_last = row_number() == n(),
     duplicate_likely = if_else(
-      is.na(unique_alien_id) | is.na(rec_date),
+      is.na(unique_identifier) | is.na(rec_date),
       NA,
       n() > 1L
     ),
-    .by = c(unique_alien_id_nona, duplicate_identifier)
+    .by = c(unique_identifier_nona, duplicate_identifier)
   ) |>
-  select(-unique_alien_id_nona) |>
+  select(-unique_identifier_nona) |>
   mutate(
     duplicate_drop_row = coalesce(duplicate_likely, FALSE) &
       !duplicate_last
   ) |>
   relocate(row_redacted, file_original, row_original, .after = last_col())
 
-arrow::write_parquet(tps_df, "data/tps-latest.parquet", compression = "zstd")
+# drop fully-redacted rows
+nrow_pre <- nrow(tps_df)
+
+redacted_rows <- sum(tps_df$row_redacted)
+
+tps_df <- tps_df |> 
+  filter(row_redacted == FALSE) |> 
+  select(-row_redacted)
+
+nrow_post <- nrow(tps_df)
+
+stopifnot((nrow_pre - nrow_post) == redacted_rows)
+
+arrow::write_parquet(tps_df, "data/tps-latest.parquet", compression = "zstd") |> 
+  haven::write_dta("data/tps-latest.dta")
+haven::write_sav(tps_df, "data/tps-latest.sav")
 write_xlsx_by_fy(tps_df, "data/tps-latest.xlsx", label = "TPS")
+
+# END.
