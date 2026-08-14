@@ -13,8 +13,8 @@ daca_df <-
   select(-form_id, -label) |>
   # remove columns that are fully blank (all NA) or fully redacted
   select(where(is_not_blank_or_redacted)) |>
-  # remove fully-redacted rows (no information in them)
-  filter(!if_all(!c(file_original, row_original), is.na)) |>
+  # add indicator for fully-redacted rows
+  mutate(row_redacted = if_all(!c(file_original, row_original), is.na)) |>
   # C3 records store country of birth as a 5-letter code, ELIS records store
   # the full name, so map the codes and keep the names as they are.
   left_join(uscis_country_codes, by = join_by(ben_country_of_birth == code)) |>
