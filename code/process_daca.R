@@ -14,7 +14,7 @@ daca_df <-
   # remove columns that are fully blank (all NA) or fully redacted
   select(where(is_not_blank_or_redacted)) |>
   # add indicator for fully-redacted rows
-    mutate(row_redacted = if_all(!c(file_original, row_original), is.na)) |>
+  mutate(row_redacted = if_all(!c(file_original, row_original), is.na)) |>
   # C3 records store country of birth as a 5-letter code, ELIS records store
   # the full name, so map the codes and keep the names as they are.
   left_join(uscis_country_codes, by = join_by(ben_country_of_birth == code)) |>
@@ -68,8 +68,8 @@ nrow_pre <- nrow(daca_df)
 
 redacted_rows <- sum(daca_df$row_redacted)
 
-daca_df <- daca_df |> 
-  filter(row_redacted == FALSE) |> 
+daca_df <- daca_df |>
+  filter(row_redacted == FALSE) |>
   select(-row_redacted)
 
 nrow_post <- nrow(daca_df)
@@ -85,11 +85,10 @@ dat_elis_noid <- daca_df |>
   filter(data_source == "ELIS" | is.na(unique_identifier)) |> 
   mutate(form_type_filled_in = form_type)
 
-dat_c3 <- daca_df |> 
-  filter(data_source == "C3",
-         !is.na(unique_identifier)) |> 
-  arrange(unique_identifier, decision_date) |> 
-  group_by(unique_identifier) |> 
+dat_c3 <- daca_df |>
+  filter(data_source == "C3", !is.na(unique_identifier)) |>
+  arrange(unique_identifier, decision_date) |>
+  group_by(unique_identifier) |>
   mutate(
     is_approval = decision == "Approved",
     n_approvals = cumsum(is_approval),
@@ -109,9 +108,11 @@ stopifnot(nrow_post == nrow_pre)
 
 rm(dat_elis_noid, dat_c3)
 
-arrow::write_parquet(daca_df, "data/daca-latest.parquet", compression = "zstd") |> 
-  haven::write_dta("data/daca-latest.dta")
-haven::write_sav(daca_df, "data/daca-latest.sav")
-write_xlsx_by_fy(daca_df, "data/daca-latest.xlsx", label = "DACA")
-
-# END.
+arrow::write_parquet(
+  daca_df,
+  "data/daca-latest.parquet",
+  compression = "zstd"
+)
+# haven::write_dta(daca_df, "data/daca-latest.dta")
+# haven::write_sav(daca_df, "data/daca-latest.sav")
+# write_xlsx_by_fy(daca_df, "data/daca-latest.xlsx", label = "DACA")

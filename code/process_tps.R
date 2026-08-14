@@ -79,17 +79,16 @@ nrow_pre <- nrow(tps_df)
 
 redacted_rows <- sum(tps_df$row_redacted)
 
-tps_df <- tps_df |> 
-  filter(row_redacted == FALSE) |> 
+tps_df <- tps_df |>
+  filter(row_redacted == FALSE) |>
   select(-row_redacted)
 
 nrow_post <- nrow(tps_df)
 
 stopifnot((nrow_pre - nrow_post) == redacted_rows)
 
-arrow::write_parquet(tps_df, "data/tps-latest.parquet", compression = "zstd") |> 
-  haven::write_dta("data/tps-latest.dta")
-haven::write_sav(tps_df, "data/tps-latest.sav")
-write_xlsx_by_fy(tps_df, "data/tps-latest.xlsx", label = "TPS")
+arrow::write_parquet(tps_df, "data/tps-latest.parquet", compression = "zstd")
 
-# END.
+#  haven::write_dta(tps_df, "data/tps-latest.dta")
+# # haven::write_sav(tps_df, "data/tps-latest.sav")
+# write_xlsx_by_fy(tps_df, "data/tps-latest.xlsx", label = "TPS")
