@@ -89,6 +89,6 @@ stopifnot((nrow_pre - nrow_post) == redacted_rows)
 
 arrow::write_parquet(tps_df, "data/tps-latest.parquet", compression = "zstd")
 
-#  haven::write_dta(tps_df, "data/tps-latest.dta")
-# # haven::write_sav(tps_df, "data/tps-latest.sav")
-# write_xlsx_by_fy(tps_df, "data/tps-latest.xlsx", label = "TPS")
+haven::write_dta(tps_df, "data/tps-latest.dta")
+haven::write_sav(tps_df, "data/tps-latest.sav")
+write_xlsx_by_fy(tps_df, "data/tps-latest.xlsx", label = "TPS")

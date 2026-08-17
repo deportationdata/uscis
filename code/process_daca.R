@@ -81,8 +81,8 @@ stopifnot((nrow_pre - nrow_post) == redacted_rows)
 # re-concatenate data subsets and check that no rows were dropped or added
 nrow_pre <- nrow(daca_df)
 
-dat_elis_noid <- daca_df |> 
-  filter(data_source == "ELIS" | is.na(unique_identifier)) |> 
+dat_elis_noid <- daca_df |>
+  filter(data_source == "ELIS" | is.na(unique_identifier)) |>
   mutate(form_type_filled_in = form_type)
 
 dat_c3 <- daca_df |>
@@ -93,11 +93,15 @@ dat_c3 <- daca_df |>
     is_approval = decision == "Approved",
     n_approvals = cumsum(is_approval),
     likely_initial = n_approvals <= 1,
-  ) |> 
-  ungroup() |> 
-  mutate(form_type_filled_in = case_when(likely_initial == TRUE ~ "DACA - Initial",
-                                      likely_initial == FALSE ~ "DACA - Renewal",
-                                      TRUE ~ NA)) |> 
+  ) |>
+  ungroup() |>
+  mutate(
+    form_type_filled_in = case_when(
+      likely_initial == TRUE ~ "DACA - Initial",
+      likely_initial == FALSE ~ "DACA - Renewal",
+      TRUE ~ NA
+    )
+  ) |>
   select(-c(is_approval, n_approvals, likely_initial))
 
 daca_df <- rbind(dat_elis_noid, dat_c3)
@@ -113,6 +117,6 @@ arrow::write_parquet(
   "data/daca-latest.parquet",
   compression = "zstd"
 )
-# haven::write_dta(daca_df, "data/daca-latest.dta")
-# haven::write_sav(daca_df, "data/daca-latest.sav")
-# write_xlsx_by_fy(daca_df, "data/daca-latest.xlsx", label = "DACA")
+haven::write_dta(daca_df, "data/daca-latest.dta")
+haven::write_sav(daca_df, "data/daca-latest.sav")
+write_xlsx_by_fy(daca_df, "data/daca-latest.xlsx", label = "DACA")
